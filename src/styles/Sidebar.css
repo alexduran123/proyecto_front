@@ -67,3 +67,104 @@ main {
     padding: 30px;
     background-color: #f9fafb; /* Un gris muy claro de fondo queda genial */
 }
+/* Globito rojo del contador */
+.notif-badge-count {
+  position: absolute;
+  top: 5px;
+  left: 22px;
+  background-color: #ff4d4d;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: bold;
+  border: 2px solid #1e293b; /* Ajusta al color de tu sidebar */
+}
+
+/* Contenedor del menú desplegable */
+.notif-dropdown-menu {
+  position: absolute;
+  left: 105%; /* Aparece a la derecha del sidebar */
+  top: 0;
+  width: 280px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  z-index: 9999;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.notif-header {
+  padding: 12px;
+  background: #f8fafc;
+  font-weight: bold;
+  font-size: 14px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.notif-item-detail {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.notif-item-detail:hover {
+  background: #f1f5f9;
+}
+
+.notif-icon-bg {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  color: white;
+  flex-shrink: 0;
+}
+
+/* Colores por tipo */
+.icon-multas { background-color: #ef4444; }
+.icon-mensaje { background-color: #3b82f6; }
+.icon-asambleas { background-color: #10b981; }
+.icon-pagos { background-color: #f59e0b; }
+
+.notif-text-content {
+  overflow: hidden;
+}
+
+.notif-category {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.notif-msg-brief {
+  margin: 0;
+  font-size: 12px;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notif-footer {
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
+  color: #3b82f6;
+  cursor: pointer;
+  background: #f8fafc;
+}
