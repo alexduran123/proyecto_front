@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion'; // Importamos animaciones
 import echo from '../echo';
 import '../styles/Sidebar.css';
 
@@ -9,6 +10,7 @@ function Sidebar() {
   // ESTADOS
   const [notifications, setNotifications] = useState([]); 
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false); // Estado para la transición de salida
 
   // 1. RECUPERAMOS EL USUARIO DE FORMA SEGURA
   const storedUser = localStorage.getItem('user');
@@ -29,11 +31,17 @@ function Sidebar() {
     return () => echo.leaveChannel('condo-notifications');
   }, []);
 
+  // Lógica de Logout con retardo para mostrar la animación
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user'); 
-    navigate('/login');
-    window.location.reload();
+    setIsLoggingOut(true); 
+    
+    // Simulamos un breve tiempo de espera (800ms) para que se aprecie la animación
+    setTimeout(() => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user'); 
+      navigate('/login');
+      window.location.reload();
+    }, 800);
   };
 
   const handleNotifClick = (type, id) => {
@@ -53,7 +61,7 @@ function Sidebar() {
           <i className="fas fa-home"></i> Inicio
         </NavLink>
 
-        {/* 2. BOTÓN DE ADMIN (Ahora lee el campo 'role') */}
+        {/* 2. BOTÓN DE ADMIN */}
         {isAdmin && (
           <NavLink 
             to="/admin/enviar-alerta" 
@@ -64,6 +72,7 @@ function Sidebar() {
           </NavLink>
         )}
 
+        {/* SECCIÓN NOTIFICACIONES */}
         <div className="nav-item-wrapper" style={{ position: 'relative' }}>
           <div 
             className={`nav-link ${notifications.length > 0 ? 'has-notif' : ''}`} 
@@ -78,33 +87,40 @@ function Sidebar() {
             )}
           </div>
 
-          {showDropdown && (
-            <div className="notif-dropdown-menu">
-              <div className="notif-header">Notificaciones Recientes</div>
-              {notifications.length === 0 ? (
-                <div className="notif-item-detail empty">No tienes avisos nuevos</div>
-              ) : (
-                notifications.map((n, index) => (
-                  <div 
-                    key={index} 
-                    className="notif-item-detail" 
-                    onClick={() => handleNotifClick(n.type, n.id_referencia)}
-                  >
-                    <div className={`notif-icon-bg icon-${n.type}`}>
-                      {n.type === 'multas' && <i className="fas fa-file-invoice-dollar"></i>}
-                      {n.type === 'mensaje' && <i className="fas fa-comment-dots"></i>}
-                      {n.type === 'asambleas' && <i className="fas fa-handshake"></i>}
-                      {n.type === 'pagos' && <i className="fas fa-money-bill-wave"></i>}
+          <AnimatePresence>
+            {showDropdown && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="notif-dropdown-menu"
+              >
+                <div className="notif-header">Notificaciones Recientes</div>
+                {notifications.length === 0 ? (
+                  <div className="notif-item-detail empty">No tienes avisos nuevos</div>
+                ) : (
+                  notifications.map((n, index) => (
+                    <div 
+                      key={index} 
+                      className="notif-item-detail" 
+                      onClick={() => handleNotifClick(n.type, n.id_referencia)}
+                    >
+                      <div className={`notif-icon-bg icon-${n.type}`}>
+                        {n.type === 'multas' && <i className="fas fa-file-invoice-dollar"></i>}
+                        {n.type === 'mensaje' && <i className="fas fa-comment-dots"></i>}
+                        {n.type === 'asambleas' && <i className="fas fa-handshake"></i>}
+                        {n.type === 'pagos' && <i className="fas fa-money-bill-wave"></i>}
+                      </div>
+                      <div className="notif-text-content">
+                        <strong className="notif-category">{n.type}</strong>
+                        <p className="notif-msg-brief">{n.message}</p>
+                      </div>
                     </div>
-                    <div className="notif-text-content">
-                      <strong className="notif-category">{n.type}</strong>
-                      <p className="notif-msg-brief">{n.message}</p>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
+                  ))
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         
         <NavLink to="/residentes" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
@@ -120,10 +136,45 @@ function Sidebar() {
         </NavLink>
       </nav>
 
+      {/* FOOTER CON BOTÓN ANIMADO */}
       <div className="sidebar-footer">
-        <button onClick={handleLogout} className="nav-link logout-btn">
-          <i className="fas fa-right-from-bracket"></i> Cerrar Sesión
-        </button>
+        <motion.button 
+          onClick={handleLogout} 
+          disabled={isLoggingOut}
+          className="nav-link logout-btn"
+          style={{ 
+            width: '100%', 
+            border: 'none', 
+            cursor: isLoggingOut ? 'not-allowed' : 'pointer',
+            backgroundColor: isLoggingOut ? 'rgba(255, 0, 0, 0.1)' : 'transparent'
+          }}
+          whileHover={!isLoggingOut ? { x: 5, backgroundColor: 'rgba(255, 0, 0, 0.05)' } : {}}
+          whileTap={!isLoggingOut ? { scale: 0.95 } : {}}
+        >
+          <AnimatePresence mode="wait">
+            {isLoggingOut ? (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center' }}
+              >
+                <i className="fas fa-circle-notch fa-spin"></i> Saliendo...
+              </motion.div>
+            ) : (
+              <motion.div
+                key="static"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+              >
+                <i className="fas fa-right-from-bracket"></i> Cerrar Sesión
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.button>
       </div>
     </aside>
   );
