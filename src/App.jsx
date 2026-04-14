@@ -1,18 +1,21 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Chat from './pages/Chat'; 
-import Login from './pages/LoginPage'; // Eliminado el espacio extra en el nombre
+import Login from './pages/LoginPage';
+import Register from './pages/RegisterPage'; // 1. Importa tu nueva página de registro
 import AdminNotifPage from './pages/AdminNotifPage';
 
 function App() {
-  // Función para verificar si hay un token guardado
   const isAuthenticated = () => !!localStorage.getItem('token');
 
   return (
     <Router>
       <Routes>
-        {/* Si ya estoy logueado y trato de ir a /login, me manda al chat */}
+        {/* Rutas Públicas */}
         <Route path="/login" element={isAuthenticated() ? <Navigate to="/chat" /> : <Login />} />
+        
+        {/* 2. Añade la ruta de registro aquí */}
+        <Route path="/register" element={isAuthenticated() ? <Navigate to="/chat" /> : <Register />} />
 
         {/* Rutas protegidas */}
         <Route
@@ -41,4 +44,4 @@ function App() {
   );
 }
 
-export default App; // Eliminada la llave extra al final
+export default App;
