@@ -2,8 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Sidebar from './components/Sidebar';
 import Chat from './pages/Chat'; 
 import Login from './pages/LoginPage';
-import Register from './pages/RegisterPage'; // 1. Importa tu nueva página de registro
+import Register from './pages/RegisterPage'; 
 import AdminNotifPage from './pages/AdminNotifPage';
+import ChangePasswordPage from './pages/ChangePasswordPage'; // Importamos la nueva vista
 
 function App() {
   const isAuthenticated = () => !!localStorage.getItem('token');
@@ -13,8 +14,6 @@ function App() {
       <Routes>
         {/* Rutas Públicas */}
         <Route path="/login" element={isAuthenticated() ? <Navigate to="/chat" /> : <Login />} />
-        
-        {/* 2. Añade la ruta de registro aquí */}
         <Route path="/register" element={isAuthenticated() ? <Navigate to="/chat" /> : <Register />} />
 
         {/* Rutas protegidas */}
@@ -30,6 +29,10 @@ function App() {
                   <Routes>
                     <Route path="/chat" element={<Chat />} />
                     <Route path="/admin/enviar-alerta" element={<AdminNotifPage />} />
+                    
+                    {/* NUEVA RUTA: Cambio de contraseña */}
+                    <Route path="/cambiar-clave" element={<ChangePasswordPage />} />
+                    
                     <Route path="/" element={<Navigate to="/chat" />} />
                   </Routes>
                 </main>

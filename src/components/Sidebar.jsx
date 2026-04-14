@@ -1,41 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion'; // Importamos animaciones
+import { motion, AnimatePresence } from 'framer-motion'; 
 import echo from '../echo';
 import '../styles/Sidebar.css';
 
 function Sidebar() {
   const navigate = useNavigate();
   
-  // ESTADOS
   const [notifications, setNotifications] = useState([]); 
   const [showDropdown, setShowDropdown] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false); // Estado para la transición de salida
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // 1. RECUPERAMOS EL USUARIO DE FORMA SEGURA
   const storedUser = localStorage.getItem('user');
   const user = storedUser ? JSON.parse(storedUser) : null;
-
-  // AJUSTE CLAVE: Tu AuthController envía "role": "admin"
   const isAdmin = user?.role === 'admin'; 
 
-  // ESCUCHADOR DE WEBSOCKETS (REVERB)
   useEffect(() => {
     const channel = echo.channel('condo-notifications');
     
     channel.listen('.notificacion.nueva', (e) => {
-        console.log("¡LLEGÓ LA NOTIFICACIÓN!", e.data);
         setNotifications(prev => [e.data, ...prev]);
     });
 
     return () => echo.leaveChannel('condo-notifications');
   }, []);
 
-  // Lógica de Logout con retardo para mostrar la animación
   const handleLogout = () => {
     setIsLoggingOut(true); 
-    
-    // Simulamos un breve tiempo de espera (800ms) para que se aprecie la animación
     setTimeout(() => {
       localStorage.removeItem('token');
       localStorage.removeItem('user'); 
@@ -61,7 +52,6 @@ function Sidebar() {
           <i className="fas fa-home"></i> Inicio
         </NavLink>
 
-        {/* 2. BOTÓN DE ADMIN */}
         {isAdmin && (
           <NavLink 
             to="/admin/enviar-alerta" 
@@ -72,7 +62,6 @@ function Sidebar() {
           </NavLink>
         )}
 
-        {/* SECCIÓN NOTIFICACIONES */}
         <div className="nav-item-wrapper" style={{ position: 'relative' }}>
           <div 
             className={`nav-link ${notifications.length > 0 ? 'has-notif' : ''}`} 
@@ -134,9 +123,13 @@ function Sidebar() {
         <NavLink to="/chat" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
           <i className="fas fa-comments"></i> Chat
         </NavLink>
+
+        {/* --- OPCIÓN DE SEGURIDAD AGREGADA --- */}
+        <NavLink to="/cambiar-clave" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+          <i className="fas fa-shield-halved"></i> Seguridad
+        </NavLink>
       </nav>
 
-      {/* FOOTER CON BOTÓN ANIMADO */}
       <div className="sidebar-footer">
         <motion.button 
           onClick={handleLogout} 
