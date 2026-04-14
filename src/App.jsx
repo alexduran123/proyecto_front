@@ -4,7 +4,8 @@ import Chat from './pages/Chat';
 import Login from './pages/LoginPage';
 import Register from './pages/RegisterPage'; 
 import AdminNotifPage from './pages/AdminNotifPage';
-import ChangePasswordPage from './pages/ChangePasswordPage'; // Importamos la nueva vista
+import ChangePasswordPage from './pages/ChangePasswordPage';
+import ForgotPassword from './pages/ForgotPassword'; // Importamos la recuperación
 
 function App() {
   const isAuthenticated = () => !!localStorage.getItem('token');
@@ -15,6 +16,9 @@ function App() {
         {/* Rutas Públicas */}
         <Route path="/login" element={isAuthenticated() ? <Navigate to="/chat" /> : <Login />} />
         <Route path="/register" element={isAuthenticated() ? <Navigate to="/chat" /> : <Register />} />
+        
+        {/* NUEVA RUTA: Recuperación de clave (Pública) */}
+        <Route path="/forgot-password" element={isAuthenticated() ? <Navigate to="/chat" /> : <ForgotPassword />} />
 
         {/* Rutas protegidas */}
         <Route
@@ -29,8 +33,6 @@ function App() {
                   <Routes>
                     <Route path="/chat" element={<Chat />} />
                     <Route path="/admin/enviar-alerta" element={<AdminNotifPage />} />
-                    
-                    {/* NUEVA RUTA: Cambio de contraseña */}
                     <Route path="/cambiar-clave" element={<ChangePasswordPage />} />
                     
                     <Route path="/" element={<Navigate to="/chat" />} />

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom'; // 1. Importar Link
+import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function Login() {
@@ -18,7 +18,7 @@ function Login() {
         try {
             const response = await axios.post('http://localhost:8000/api/login', { 
                 email, 
-                pass: password // Ajustado a 'pass' que es lo que espera tu controlador
+                pass: password // Ajustado a 'pass' según tu controlador
             });
             
             if (response.data.access_token) {
@@ -26,12 +26,11 @@ function Login() {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
 
                 setTimeout(() => {
-                    window.location.href = '/chat'; // O la ruta que prefieras
+                    window.location.href = '/chat';
                 }, 500);
             }
         } catch (error) {
             console.error("Error completo:", error);
-            // Si el error es 403, es probable que sea por email no verificado
             const msg = error.response?.status === 403 
                 ? "Debes verificar tu correo electrónico primero." 
                 : "Credenciales incorrectas o error de servidor.";
@@ -97,7 +96,7 @@ function Login() {
                             ...buttonStyle,
                             backgroundColor: loading ? '#ccc' : '#ff6600',
                             cursor: loading ? 'not-allowed' : 'pointer',
-                            marginBottom: '20px'
+                            marginBottom: '15px'
                         }}
                     >
                         <AnimatePresence mode="wait">
@@ -113,6 +112,13 @@ function Login() {
                         </AnimatePresence>
                     </motion.button>
                 </form>
+
+                {/* --- OPCIÓN RECUPERAR CONTRASEÑA --- */}
+                <div style={{ marginBottom: '20px' }}>
+                    <Link to="/forgot-password" style={{ color: '#ff6600', fontSize: '14px', textDecoration: 'none', fontWeight: '500' }}>
+                        ¿Olvidaste tu contraseña?
+                    </Link>
+                </div>
 
                 {/* --- SECCIÓN DE REGISTRO --- */}
                 <hr style={{ border: '0', borderTop: '1px solid #eee', margin: '20px 0' }} />
